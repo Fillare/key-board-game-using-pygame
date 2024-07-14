@@ -1,0 +1,100 @@
+import random
+import pygame
+
+pygame.init()
+#screen
+bg=pygame.display.set_mode((600,420))
+#title of the window
+pygame.display.set_caption('The KeyBoard Game')
+#fonts
+fnt1=pygame.font.SysFont('jokerman',40)
+fnt2=pygame.font.SysFont('algerian',30)
+fnt3=pygame.font.SysFont('constantia',50)
+#GAME NAME
+txt1=fnt1.render('THE KEY BOARD GAME',True,'white')
+
+#start button
+start=fnt2.render('start',True,'white')
+start_rect=start.get_rect(topleft=(247,160))
+
+#menu screen
+def menu():
+    bg.fill('#00011c')
+    bg.blit(txt1,(80,60))
+    bg.blit(start,start_rect)
+
+#game material
+cyan=(79,173,242)
+key_name=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q'
+          ,'R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9','0']
+sound=pygame.mixer.Sound('my sounds/buzzer sound py.wav')
+
+score=0
+txt=fnt3.render('press the following key',True,'#00011c')
+exit=fnt2.render('exit',True,'#00011c')
+exit_rect=exit.get_rect(topleft=(20,20))
+
+#game screen
+def game(random_keys):
+    bg.fill(cyan)
+    bg.blit(txt,(60,100))
+
+    key_txt=fnt3.render(random_keys,True,'#00011c')
+    bg.blit(key_txt,(270,200))
+
+    pygame.draw.rect(bg,'white',(12,20,80,40))
+    bg.blit(exit,exit_rect)
+
+    pygame.draw.rect(bg,'white',(440,20,150,40))
+    score_txt=fnt2.render(f'score: {score}',True,'#00011c')
+    bg.blit(score_txt,(440,20))
+
+
+screen1=True
+screen2=False
+
+#menu screen loop
+while screen1:
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT:
+            screen1=False
+        if event.type==pygame.MOUSEBUTTONDOWN:
+            if start_rect.collidepoint(event.pos):
+                screen1=False
+                screen2=True
+    menu()
+    pygame.display.update()
+
+#default key
+random_keys='Q'
+
+#game screen loop
+while screen2:
+
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT:
+            screen2=True
+        
+    
+    game(random_keys)        
+    pygame.display.update()
+    event = pygame.event.wait()
+    if event.type==pygame.KEYDOWN:
+        if event.key == pygame.KEYDOWN and event.unicode.upper() == random_keys:
+            random_keys=random.choice(key_name)
+            score+=1
+        elif event.key != pygame.KEYDOWN and event.unicode.upper() != random_keys:
+            sound.play()
+        else:
+            random_keys=random.choice(key_name)
+            score+=1
+            
+    if event.type==pygame.QUIT:
+        sound.stop()
+
+    if event.type==pygame.MOUSEBUTTONDOWN:
+            if exit_rect.collidepoint(event.pos):
+                screen2=False
+                screen1=True
+            
+pygame.quit()
